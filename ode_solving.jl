@@ -1,7 +1,7 @@
 using Plots
 using DifferentialEquations
 
-function EulersMethod(f::Function, α::Real, a::Real, b::Real, N::Int64)
+function eulers_method(f::Function, α::Real, a::Real, b::Real, N::Int64)
 
     #number of steps
     n1 = N + 1
@@ -51,4 +51,34 @@ function runge_kutta_4(f::Function, α::Real, a::Real, b::Real, N::Int64)
     end
 
     return u
+end
+
+function main()
+    ode_solver_trial()
+end
+
+function ode_solver_trial()
+    
+    df(t,y) = y - t^2 + 1
+    f(t) = -0.5*exp(t) + t^2 + 2t + 1
+
+    u0 = 0.5
+    a = 0
+    b = 2
+    n = 10
+    tlin = 0:0.2:2
+
+    euler_sol = eulers_method(df, u0, a, b, n)
+    rk4_sol = runge_kutta_4(df, u0, a, b, n)
+
+    # DE library
+    df(u,p,t) = u - t^2 + 1
+    tspan = (0., 2.)
+    prob = ODEProblem(df, u0, tspan)
+    de_lib_sol = solve(prob)
+
+    plot(tlin, f.(tlin), label="exact", legend=:bottomright, dpi=150)
+    plot!(de_lib_sol.t, de_lib_sol.u, markershape=:x, label="DE LIB")
+    plot!(rk4_sol[:,1], rk4_sol[:,2], markershape=:+, label="rk4")
+    plot!(euler_sol[:,1], euler_sol[:,1], markershape=:o, label="euler's")
 end
