@@ -1,6 +1,8 @@
 using Plots
 using DifferentialEquations
 
+plotly()
+
 function eulers_method(f::Function, α::Real, a::Real, b::Real, N::Int64)
 
     #number of steps
@@ -39,7 +41,7 @@ function runge_kutta_4(f::Function, α::Real, a::Real, b::Real, N::Int64)
     #RK4 method
     for i in 2:n1
         t = u[i - 1,1]
-        w = u[i - 2,2]
+        w = u[i - 1,2]
 
         k1 = h * f(t, w)
         k2 = h * f(t + h / 2, w + k1 / 2)
@@ -78,7 +80,12 @@ function ode_solver_trial()
     de_lib_sol = solve(prob)
 
     plot(tlin, f.(tlin), label="exact", legend=:bottomright, dpi=150)
-    plot!(de_lib_sol.t, de_lib_sol.u, markershape=:x, label="DE LIB")
-    plot!(rk4_sol[:,1], rk4_sol[:,2], markershape=:+, label="rk4")
-    plot!(euler_sol[:,1], euler_sol[:,1], markershape=:o, label="euler's")
+    plot!(de_lib_sol.t, de_lib_sol.u, markershape=:x, label="DE LIB");
+    plot!(rk4_sol[:,1], rk4_sol[:,2], markershape=:+, label="rk4");
+    plot!(euler_sol[:,1], euler_sol[:,2], markershape=:o, label="euler's")
+
+    gui()
+    readline();
 end
+
+main()
